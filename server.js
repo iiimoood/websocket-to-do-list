@@ -5,11 +5,15 @@ const db = require('./db');
 
 const app = express();
 
+app.use(express.static(path.join(__dirname, '/clientApp/build')));
 
 app.use((req, res) => {
-  res.status(404).json({ message: 'Not found...' });
+  res.status(404).send({ message: 'Not found...' });
 });
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/clientApp/build/index.html'));
+});
 
 const server = app.listen(process.env.PORT || 8000, () => {
   console.log('Server is running...');
