@@ -39,6 +39,10 @@ const App = () => {
     correctSocket.on('updateData', (data) => updateTasks(data));
     correctSocket.on('removeTask', (id) => removeTask(id));
     correctSocket.on('addTask', (task) => addTask(task));
+
+    return () => {
+      correctSocket.disconnect();
+    };
   }, []);
 
   return (
@@ -54,7 +58,10 @@ const App = () => {
           {tasks.map((task) => (
             <li className="task" key={task.id}>
               {task.name}{' '}
-              <button className="btn btn--red" onClick={removeTask(task.id)}>
+              <button
+                className="btn btn--red"
+                onClick={() => removeTask(task.id)}
+              >
                 Remove
               </button>
             </li>
