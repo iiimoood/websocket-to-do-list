@@ -7,13 +7,20 @@ const App = () => {
   const [tasks, setTasks] = useState([]);
   const [taskName, setTaskName] = useState('');
 
+  const updateTasks = (data) => {
+    setTasks((data) => [...tasks, ...data]);
+  };
+
   const addTask = (task) => {
     setTasks((tasks) => [...tasks, task]);
   };
 
   const removeTask = (id) => {
     setTasks((tasks) => tasks.filter((task) => task.id !== id));
-    socket.emit('removeTask', id);
+
+    if (socket) {
+      socket.emit('removeTask', id);
+    }
   };
 
   const submitForm = (e) => {
@@ -24,10 +31,14 @@ const App = () => {
   };
 
   useEffect(() => {
-    const correctSocket = io('ws://localhost:8000', { transports: ["websocket"] });
+    const correctSocket = io('ws://localhost:8000', {
+      transports: ['websocket'],
+    });
     setSocket(correctSocket);
 
+    correctSocket.on('updateData', (data) => updateTasks(data));
     correctSocket.on('removeTask', (id) => removeTask(id));
+    correctSocket.on('addTask', (task) => addTask(task));
   }, []);
 
   return (
